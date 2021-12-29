@@ -123,8 +123,6 @@ const uploadData = async (req, res, next) => {
 
   const listData = ['ijazah', 'kk', 'pasFoto'];
   console.log('req body data', req.body);
-  console.log('req body files', req.files);
-
   try {
     const dataSantri = JSON.parse(req.body.data);
     const links = [];
@@ -133,6 +131,8 @@ const uploadData = async (req, res, next) => {
     let kk = '';
     let pasFoto = '';
     console.log('datasantri', dataSantri)
+    console.log('upload files ',files)
+
   
     if(dataSantri.length < 20 && !dataSantri) {
       res.status(400).json({
@@ -142,7 +142,7 @@ const uploadData = async (req, res, next) => {
   
   
     listData.map(async (item) => {
-      const path = `${dataSantri[0]}-${dataSantri[2]}.${files[item].name.split('.').pop()}`;
+      const path = `${item}-${dataSantri[0]}-${dataSantri[2]}.${files[item].name.split('.').pop()}`;
       await files[item].mv(path);
   
       await driveService.files
@@ -183,7 +183,9 @@ const uploadData = async (req, res, next) => {
         }).finally(() => {
           
         })
-      // await fs.unlink(path);
+      fs.unlink(path, (err) => {
+        console.log('error unlink', err)
+      });
       if (ijazah && kk && pasFoto) {
         req.body.data = dataSantri.concat([ijazah, kk, pasFoto]);
         next();
