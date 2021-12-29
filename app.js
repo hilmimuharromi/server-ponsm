@@ -3,7 +3,8 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const app = express();
 const { google } = require('googleapis');
-const KEYFILEPATH = './ponpes-sm-45b618bd935c.json';
+const KEYFILEPATHDev = './ponpes-sm-45b618bd935c.json';
+const KEYFILEPATH = 'ponpes-sm-336602-451b97d97189.json'
 const fs = require('fs');
 // Request full drive access.
 const SCOPES = [
@@ -19,7 +20,12 @@ const auth = new google.auth.GoogleAuth({
 
 const driveService = google.drive({ version: 'v3', auth });
 const sheetService = google.sheets({ version: 'v4', auth });
-const sheetId = '1te-KcUqdYIqlcaWliiNKVQDIp4mJ3wgxS2Jhu5g_pF8';
+const sheetIdDev = '1te-KcUqdYIqlcaWliiNKVQDIp4mJ3wgxS2Jhu5g_pF8';
+
+const sheetIdProd = '1oV119ih18vpP_WjXnwGJMid0YrthUVEt-c7pUd5J5K4'
+const folderIdProd = '12yhv1ufsc3n9Vvz0aQLzCOn3jXSLoTy7'
+const folderId = '18UDX15ta0k2XRwJ52rELsU0zj7wycb65'
+
 
 app.use(cors());
 app.use(
@@ -34,7 +40,7 @@ app.use(express.json());
 app.get('/all', async (req, res) => {
   console.log('req ===>', req.headers);
   const request = {
-    spreadsheetId: sheetId,
+    spreadsheetId: sheetIdProd,
     // range: "Sheet1",
     resource: {
       dataFilters: [
@@ -65,7 +71,7 @@ app.post('/add', async (req, res) => {
   try {
     const result = await sheetService.spreadsheets.values.append({
       auth, //auth object
-      spreadsheetId: sheetId, //spreadsheet id
+      spreadsheetId: sheetIdProd, //spreadsheet id
       range: 'Sheet1!A:B', //sheet name and range of cells
       valueInputOption: 'USER_ENTERED', // The information will be passed according to what the usere passes in as date, number or text
       resource: {
@@ -91,7 +97,7 @@ const insertData = async (req, res) => {
   try {
     const result = await sheetService.spreadsheets.values.append({
       auth, //auth object
-      spreadsheetId: sheetId, //spreadsheet id
+      spreadsheetId: sheetIdProd, //spreadsheet id
       range: 'Sheet1!A:B', //sheet name and range of cells
       valueInputOption: 'USER_ENTERED', // The information will be passed according to what the usere passes in as date, number or text
       resource: {
@@ -143,7 +149,7 @@ const uploadData = async (req, res, next) => {
         .create({
           requestBody: {
             name: `${item}-${path}`,
-            parents: ['18UDX15ta0k2XRwJ52rELsU0zj7wycb65'],
+            parents: [folderIdProd],
           },
           media: {
             mimeType: files[item].mimetype,
